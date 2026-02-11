@@ -5,7 +5,7 @@
     VPC, metrique machine virtuelle
   -  Datawarehouse:
     Etat du service base de données
-# Produit
+# Produits
 ##  Prometheuse & Grafana
   Avantages
   -   gratuit et open source
