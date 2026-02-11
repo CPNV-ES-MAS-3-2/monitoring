@@ -35,3 +35,5 @@
   -  plateforme centralisé avec metric et log
   Désvantages:
   -  payant
+# Choix du produit
+Prometheuse & Grafana
