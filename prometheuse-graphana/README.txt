@@ -4,7 +4,7 @@ cd ~/prometheus
 sudo nano docker-compose.yml
 	**mettre contenus du docker-compose**
 sudo nano prometheus.yml
-	**metrte contenus de preometheus.yml**
+	**metrte contenus de prometheus.yml**
 
 
 sudo docker compose up -d
@@ -42,6 +42,7 @@ import a Dashboard
 
 id: 1860
  dashboard officiel Node Exporter Full.
+
 
 
 
