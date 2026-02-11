@@ -1,39 +1,37 @@
-# besoins de monitoring
-  -  monitoring des metriques AWS
-    -  CPU
-    -  RAM
-    -  Disk
-    -  Réseau
-  -  infrastructure
-    -  VPC
-    -  metrique machine virtuelle
-  -  Datawarehouse
-    -  Etat du service base de données
-# produit
-##  prometheuse & grafana
-  avantages :
-    -  gratuit et open source
-    -  native kuberetes (decouverte automatique de pods/noeud/services)
-    -  pull performant pour avoir les métriques
-    -  permet d'avoir des dashbord personalisé avec grafana
-    -  utilisation standar avec k8
+# Besoins de monitoring
+  -  monitoring des metriques AWS:
+     CPU, RAM, Disk, Réseau
+  -  infrastructure:
+    VPC, metrique machine virtuelle
+  -  Datawarehouse:
+    Etat du service base de données
+# Produit
+##  Prometheuse & Grafana
+  Avantages
+  -   gratuit et open source
+  -  native kuberetes (decouverte automatique de pods/noeud/services)
+  -  pull performant pour avoir les métriques
+  -  permet d'avoir des dashbord personalisé avec grafana
+  -   utilisation standar avec k8
+    
 ## AWS CloudWatch
-  avantages :
-    -  natif a AWS
-    -  collecte de données centralisé a une seul console
-  désavantages:
-    -  propre a AWS
-    -  besoins d'agent suplémentaire pour K8
+  Avantages
+  -   gratuit et open source
+  -   natif a aws
+  -   collecte de données centralisé a une seule console
+  Désavantages
+  -  propre a AWS
+  -  besoins d'agent suplémentaire pour K8
 ## Datadog
-  avantages
+  Avantages
   -  bonne obérvabilité des métric et des logs
   -  beaucoup d'intégration dispo
   -  dashbord et mise en place des alertes très aboutis
   -  gestion centralisé
-  désavantages:
+  Désavantages:
   -  cout élevé
-##  new Relic
-  avantages:
+##  New Relic
+  Avantages:
   -  plateforme centralisé avec metric et log
-  désvantages:
+  Désvantages:
   -  payant
