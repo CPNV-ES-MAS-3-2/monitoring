@@ -1,46 +1,55 @@
-cloud-architecture-diagram
-direction right
+Administrators [icon: user]
 AWS Infra [label: "AWS Infrastructure"] {
     AWS Hypervisor [label: "AWS Hypervisor"] {
       Cloudwatch [icon: aws-cloudwatch]
-  
+
       AWS DMZ Network [label: "AWS DMZ Network"] {
         RP [label: "Reverse Proxy", icon: shield]
       }
   
       AWS LAN Network [label: "AWS LAN Network"] {
-        K8s Block [label: "K8s"] {
-          K8s VM 1 [label: "K8s VM 1"] {
-            K8s VM 1 CPU [label: "CPU Usage", icon: cpu]
-            K8s VM 1 RAM [label: "RAM Usage", icon: server]
-            K8s VM 1 Disk [label: "Disk Usage", icon: hard-drive]
-            K8s VM 1 Network [label: "Network Bandwidth/Latency", icon: activity]
+        
+        K8s Block [label: "K8s Network"] {
+          K8s-VM-1 [label: "K8s VM 1"] {
+            K8s-VM-1-Alloy [label: "Alloy container", icon: docker]
           }
         }
   
-        Monitoring [label: "Monitoring"] {
+        Monitoring [label: "Monitoring Network"] {
           Mon VM 1 [label: "Mon VM 1"] {
-            Dashboard [icon: layout]
-            Backend [icon: server]
+            Grafana [icon: layout]
+            Prometheus [icon: server]
+            Loki [icon: server]
           }
         }
   
-        DWH [label: "Datawarehouse"] {
-          DWH VM 1 [label: "DWH VM 1"] {
-            DWH VM 1 CPU [label: "CPU Usage", icon: cpu]
-            DWH VM 1 RAM [label: "RAM Usage", icon: server]
-            DWH VM 1 Disk [label: "Disk Usage", icon: hard-drive]
-            DWH VM 1 Network [label: "Network Bandwidth/Latency", icon: activity]
-            DWH VM 1 Database [label: "Database state", icon: database]
+        DWH [label: "Datawarehouse Network"] {
+          DWH-VM-1 [label: "DWH VM 1"] {
+            DWH-VM-1-Database [label: "Database service", icon: database]
+            DWH-VM-1-Alloy [label: "Alloy service", icon: terminal]
           }
         }
       }
     }
   }
   
-  // Connections
-  RP <-- Dashboard: "HTTP/HTTPS"
-  Dashboard <> Backend
-  Backend <-- DWH VM 1: "Metrics/Logs"
-  Backend <-- K8s VM 1: "Metrics/Logs"
-  Backend <-- Cloudwatch: API Scrape Hypervisor Metrics
+// AWS Connections
+
+  /// Monitoring connections
+  RP > Grafana: "Web UI [3000/HTTPS]"
+  RP <> Prometheus: "Metrics [9090/HTTPS]"
+  RP <> Loki: "Logs [3100/HTTPS]"
+  
+  Grafana > Prometheus
+  Grafana > Loki
+
+  /// K8s connections
+  RP < K8s-VM-1: "/prometheus & /loki [443/HTTPS]"
+
+  /// DWH connections
+  RP < DWH-VM-1: "/prometheus & /loki [443/HTTPS]"
+
+  Prometheus < Cloudwatch: "AWS API [443/HTTPS]"
+
+// External connections
+  Administrators > RP: "/grafana [443/HTTPS]"
