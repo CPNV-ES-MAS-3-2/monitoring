@@ -71,3 +71,14 @@
 # Choix du produit
 
 **Prometheus & Grafana**
+## Comparatif des solutions de monitoring
+
+| Critère | Prometheus & Grafana | Pourquoi c'est un avantage |
+|----------|----------------------|----------------------------|
+| Licence | Open source | Pas de coût de licence |
+| Intégration Kubernetes | Native | Découverte automatique des pods et services |
+| Modèle de collecte | Pull | Meilleur contrôle des métriques |
+| Personnalisation | Dashboards Grafana | Très flexible et adapté aux besoins |
+| Indépendance | Multi-cloud | Pas lié uniquement à AWS |
+| Coût | Gratuit | Réduction des dépenses |
+
