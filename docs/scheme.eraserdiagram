@@ -1,0 +1,46 @@
+cloud-architecture-diagram
+direction right
+AWS Infra [label: "AWS Infrastructure"] {
+    AWS Hypervisor [label: "AWS Hypervisor"] {
+      Cloudwatch [icon: aws-cloudwatch]
+  
+      AWS DMZ Network [label: "AWS DMZ Network"] {
+        RP [label: "Reverse Proxy", icon: shield]
+      }
+  
+      AWS LAN Network [label: "AWS LAN Network"] {
+        K8s Block [label: "K8s"] {
+          K8s VM 1 [label: "K8s VM 1"] {
+            K8s VM 1 CPU [label: "CPU Usage", icon: cpu]
+            K8s VM 1 RAM [label: "RAM Usage", icon: server]
+            K8s VM 1 Disk [label: "Disk Usage", icon: hard-drive]
+            K8s VM 1 Network [label: "Network Bandwidth/Latency", icon: activity]
+          }
+        }
+  
+        Monitoring [label: "Monitoring"] {
+          Mon VM 1 [label: "Mon VM 1"] {
+            Dashboard [icon: layout]
+            Backend [icon: server]
+          }
+        }
+  
+        DWH [label: "Datawarehouse"] {
+          DWH VM 1 [label: "DWH VM 1"] {
+            DWH VM 1 CPU [label: "CPU Usage", icon: cpu]
+            DWH VM 1 RAM [label: "RAM Usage", icon: server]
+            DWH VM 1 Disk [label: "Disk Usage", icon: hard-drive]
+            DWH VM 1 Network [label: "Network Bandwidth/Latency", icon: activity]
+            DWH VM 1 Database [label: "Database state", icon: database]
+          }
+        }
+      }
+    }
+  }
+  
+  // Connections
+  RP <-- Dashboard: "HTTP/HTTPS"
+  Dashboard <> Backend
+  Backend <-- DWH VM 1: "Metrics/Logs"
+  Backend <-- K8s VM 1: "Metrics/Logs"
+  Backend <-- Cloudwatch: API Scrape Hypervisor Metrics
