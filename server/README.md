@@ -53,6 +53,16 @@ server {
     }
 }
 ```
+## Installation de Docker
+### Copie et exécution du script 
+copier contenus de docker_instalation.sh sur la machine
+```
+sudo chmod +x docker_installation.sh
+```
+puis lance le script
+```
+./docker_installation
+```
 
 ## Déploiement des Services (Docker Compose)
 ``` Bash
