@@ -1,0 +1,38 @@
+// Collect
+prometheus.exporter.unix "local_host" {}
+
+// Scrape host
+prometheus.scrape "metamonitoring" {
+  targets    = prometheus.exporter.unix.local_host.targets
+  forward_to = [prometheus.relabel.common_labels.receiver]
+  scrape_interval = "15s"
+}
+
+// OPTIONAL - Scrape containers 
+// prometheus.scrape "cadvisor" {
+//  targets = [{"__address__" = "localhost:8080"}]
+//  forward_to = [prometheus.relabel.common_labels.receiver]
+//  scrape_interval = "15s"
+// }
+
+// Relabel
+prometheus.relabel "common_labels" {
+  forward_to = [prometheus.remote_write.local_prometheus.receiver]
+
+  rule {
+    target_label = "job"
+    replacement  = "node_exporter"
+  }
+
+  rule {
+    target_label = "instance"
+    replacement  = sys.env("HOSTNAME")
+  }
+}
+
+// Push
+prometheus.remote_write "local_prometheus" {
+  endpoint {
+    url = "http://192.168.1.7/prometheus/api/v1/write"
+  }
+}

@@ -11,7 +11,7 @@
 
 ### Ports d'accès
 - SSH : 22
-- HTTPS : 443
+- HTTP : 80
 
 ## Architecture
 !["Architecture"](/docs/img/arch_scheme.png)
