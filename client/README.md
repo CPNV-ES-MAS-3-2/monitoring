@@ -159,4 +159,16 @@ Appliquez les changements :
 ``` Bash
 sudo systemctl restart alloy
 ```
-
+## monitoring mariadb
+grafana>dashboard>new dashboard
+source prometheus
+query: 
+```
+node_systemd_unit_state{name="mariadb.service", state="active"}
+```
+mettre la visualisation en stat
+sous value mapping on ajoute 2 value mapping:
+```
+1        ->        online         color: green
+0        ->        offline        color: red
+```
