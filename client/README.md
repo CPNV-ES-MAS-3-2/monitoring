@@ -50,6 +50,7 @@ Insérez la configuration suivante :
 ```
 // Collect
 prometheus.exporter.unix "local_host" {
+        enable_collectors = ["systemd"]
 }
 
 // Scrape
