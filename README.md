@@ -10,8 +10,12 @@
 - Disk 2 : 50 GB
 
 ### Ports d'accès
-- SSH : 22
-- HTTP : 80
+
+| Port | Protocole | Usage |
+|------|-----------|-------|
+| 22 | TCP | SSH |
+| 3000 | TCP | Interface Grafana |
+| 9090 | TCP | Interface/API Prometheus |
 
 ## Architecture
 !["Architecture"](/docs/img/arch_scheme.png)
