@@ -1,17 +1,17 @@
 Administrators [icon: user]
 AWS Infra [label: "AWS Infrastructure"] {
     AWS Hypervisor [label: "AWS Hypervisor"] {
-      Cloudwatch [icon: aws-cloudwatch]
 
       AWS DMZ Network [label: "AWS DMZ Network"] {
-        RP [label: "Reverse Proxy", icon: shield]
+        Firewall[label: "Firewall", icon: shield]
       }
   
       AWS LAN Network [label: "AWS LAN Network"] {
         
         K8s Block [label: "K8s Network"] {
           K8s-VM-1 [label: "K8s VM 1"] {
-            K8s-VM-1-Alloy [label: "Alloy container", icon: docker]
+            K8s-VM-1-Alloy-s [label: "Alloy systemd", icon: service]
+            K8s-VM-1-Alloy-c [label: "CAdvisor container", icon: docker]
           }
         }
   
@@ -19,14 +19,13 @@ AWS Infra [label: "AWS Infrastructure"] {
           Mon VM 1 [label: "Mon VM 1"] {
             Grafana [icon: layout]
             Prometheus [icon: server]
-            Loki [icon: server]
+            RP [icon: shield]
           }
         }
   
         DWH [label: "Datawarehouse Network"] {
           DWH-VM-1 [label: "DWH VM 1"] {
-            DWH-VM-1-Database [label: "Database service", icon: database]
-            DWH-VM-1-Alloy [label: "Alloy service", icon: terminal]
+            DWH-VM-1-Alloy-s [label: "Alloy systemd", icon: service]
           }
         }
       }
@@ -36,20 +35,20 @@ AWS Infra [label: "AWS Infrastructure"] {
 // AWS Connections
 
   /// Monitoring connections
-  RP > Grafana: "Web UI [3000/HTTPS]"
-  RP <> Prometheus: "Metrics [9090/HTTPS]"
-  RP <> Loki: "Logs [3100/HTTPS]"
+  Firewall > RP: "/grafana [80/HTTP]"
+  Firewall > RP: "/prometheus [80/HTTP]"
   
-  Grafana > Prometheus
-  Grafana > Loki
+  RP > Grafana: "[3000/HTTP]"
+  RP > Prometheus: "[9090/HTTP]"
+
+  Grafana > Prometheus: "[9090/HTTP]"
 
   /// K8s connections
-  RP < K8s-VM-1: "/prometheus & /loki [443/HTTPS]"
+  RP < K8s-VM-1-Alloy-s: "/prometheus/api/v1/write [80/HTTP]"
+  K8s-VM-1-Alloy-s > K8s-VM-1-Alloy-c: "[8080/HTTP]"
 
   /// DWH connections
-  RP < DWH-VM-1: "/prometheus & /loki [443/HTTPS]"
-
-  Prometheus < Cloudwatch: "AWS API [443/HTTPS]"
+  RP < DWH-VM-1-Alloy-s: "/prometheus/api/v1/write [80/HTTP]"
 
 // External connections
-  Administrators > RP: "/grafana [443/HTTPS]"
+  Administrators > Firewall: "/grafana [80/HTTP]"
