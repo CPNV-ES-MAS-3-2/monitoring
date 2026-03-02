@@ -1,6 +1,7 @@
 // Collect
-prometheus.exporter.unix "local_host" {}
-
+prometheus.exporter.unix "local_host" {
+        enable_collectors = ["systemd"]
+}
 // Scrape host
 prometheus.scrape "metamonitoring" {
   targets    = prometheus.exporter.unix.local_host.targets
