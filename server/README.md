@@ -180,4 +180,5 @@ sous value mapping on ajoute 2 value mapping:
 | :--- | :--- | :--- |
 | 1 | online | vert |
 | 0 | offline | rouge |
+
 mettre le type de query en **Instant** dans les options
