@@ -144,6 +144,8 @@ Puis sauvegardez et testé tout en bas
 
 ## Configuration des Tableaux de Bord (Grafana)
 ### Importation des Dashboards
+
+> Dashboards > New > New dashboard
 Utilisez les IDs officiels pour importer les visualisations :
 1. Node Exporter Full (Hôte)
   - **ID :** 1860
@@ -151,6 +153,8 @@ Utilisez les IDs officiels pour importer les visualisations :
 2. cAdvisor Exporter (Containers)
   - **ID :** 14282
   - **Usage :** État de santé des conteneurs Docker
+  - **Data source :** Prometheus
+
 
 #### Correction de la variable Prometheus pour la dashboard CAdvisor Exporter
 Pour le dashboard 14282, une modification manuelle est nécessaire pour lier les données :
@@ -162,3 +166,17 @@ Configurez la variable comme suit :
 | Variable Type | Datasource |
 | Name | DS_PROMETHEUS |
 | Data Source options Type | Prometheus |
+
+#### Monitoring MariaDB
+grafana>dashboard>new dashboard
+source prometheus
+query: 
+```
+node_systemd_unit_state{name="mariadb.service", state="active"}
+```
+mettre la visualisation en stat
+sous value mapping on ajoute 2 value mapping:
+```
+1        ->        online         color: green
+0        ->        offline        color: red
+```
