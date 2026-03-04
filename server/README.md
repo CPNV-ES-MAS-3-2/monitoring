@@ -176,7 +176,8 @@ node_systemd_unit_state{name="mariadb.service", state="active"}
 ```
 mettre la visualisation en stat
 sous value mapping on ajoute 2 value mapping:
-```
-1        ->        online         color: green
-0        ->        offline        color: red
-```
+| valeur | texte | couleur |
+| :--- | :--- | :--- |
+| 1 | online | vert |
+| 0 | offline | rouge |
+mettre le type de query en **Instant** dans les options
