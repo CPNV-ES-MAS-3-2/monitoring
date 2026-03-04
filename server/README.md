@@ -2,6 +2,37 @@
 
 Ce guide détaille le déploiement du serveur de monitoring utilisant **Prometheus** pour la réception des données et **Grafana** pour la visualisation, avec un reverse-proxy **Nginx**.
 
+## Configuration de l'environnement
+### Monter le repertoire
+``` Bash
+sudo mkdir /mnt/monitoring
+sudo mkfs.ext4 /dev/nvme1n1
+sudo mount /dev/nvme1n1 /mnt/monitoring
+cd /mnt/monitoring
+```
+
+### Configurer la persistence du repertoire
+``` Bash
+## Recuperer uuid
+sudo blkid /dev/nvme1n1
+ 
+sudo nano /etc/fstab
+## Ajouter dans le fstab :
+UUID=<mnt_uuid> /mnt/monitoring ext4 defaults 0 2
+```
+
+### Installation de Docker
+``` Bash
+## Télécharger le script
+wget https://raw.githubusercontent.com/CPNV-ES-MAS-3-2/monitoring/develop/server/setup_docker.sh
+
+## Configuration des droits d'éxecution
+sudo chmod +x setup_docker.sh
+
+## Execution du script
+sudo bash setup_docker.sh
+```
+
 ## Configuration du Reverse-Proxy Nginx
 Créez le fichier de configuration pour gérer le routage des services via des sous-chemins.
 ``` Bash
@@ -53,16 +84,6 @@ server {
     }
 }
 ```
-## Installation de Docker
-### Copie et exécution du script 
-copier contenus de docker_instalation.sh sur la machine
-```
-sudo chmod +x docker_installation.sh
-```
-puis lance le script
-```
-./docker_installation
-```
 
 ## Déploiement des Services (Docker Compose)
 ``` Bash
@@ -111,6 +132,7 @@ Lancement de la stack :
 ``` Bash
 docker compose up -d
 ```
+Une fois les services démarrés, accédez à Grafana via http://<IP_SERVEUR>/grafana/.
 
 ## Configuration de la data source
 Il faut annoncer à Grafana la source de données prometheus :
@@ -121,8 +143,6 @@ Il faut annoncer à Grafana la source de données prometheus :
 Puis sauvegardez et testé tout en bas
 
 ## Configuration des Tableaux de Bord (Grafana)
-Une fois les services démarrés, accédez à Grafana via http://<IP_SERVEUR>/grafana/.
-
 ### Importation des Dashboards
 Utilisez les IDs officiels pour importer les visualisations :
 1. Node Exporter Full (Hôte)
@@ -132,7 +152,7 @@ Utilisez les IDs officiels pour importer les visualisations :
   - **ID :** 14282
   - **Usage :** État de santé des conteneurs Docker
 
-### Correction de la variable Prometheus pour la dashboard CAdvisor Exporter
+#### Correction de la variable Prometheus pour la dashboard CAdvisor Exporter
 Pour le dashboard 14282, une modification manuelle est nécessaire pour lier les données :
 > Dashboard Settings (Top right) > Variables > New Variable
 
