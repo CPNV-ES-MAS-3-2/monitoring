@@ -20,7 +20,6 @@ sudo nano /etc/fstab
 ## Ajouter dans le fstab :
 UUID=<mnt_uuid> /mnt/monitoring ext4 defaults 0 2
 ```
-
 ### Installation de Docker
 ``` Bash
 ## Télécharger le script
