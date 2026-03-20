@@ -83,7 +83,57 @@ server {
     }
 }
 ```
+## Configuration du service Mimir
+Créez le fichier de configuration pour gérer le routage des services via des sous-chemins.
+``` Bash
+nano configs/mimir.yml
+```
+Insérez la configuration suivante :
+```
+target: all
+multitenancy_enabled: false
 
+ingester:
+  ring:
+    replication_factor: 1
+    kvstore:
+      store: inmemory
+
+distributor:
+  ring:
+    kvstore:
+      store: inmemory
+
+store_gateway:
+  sharding_ring:
+    kvstore:
+      store: inmemory
+
+compactor:
+  sharding_ring:
+    kvstore:
+      store: inmemory
+```
+## Configuration du prometheus
+Créez le fichier de configuration pour gérer le routage des services via des sous-chemins.
+``` Bash
+nano configs/mimir.yml
+```
+Insérez la configuration suivante :
+```
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+remote_write:
+  - url: http://mimir:8080/api/v1/push
+    headers:
+      X-Scope-OrgID: anonymous
+```
 ## Déploiement des Services (Docker Compose)
 ``` Bash
 nano compose.yml
@@ -148,11 +198,28 @@ docker compose up -d
 ```
 Une fois les services démarrés, accédez à Grafana via http://<IP_SERVEUR>/grafana/.
 
-## Configuration de la data source
+## Configuration des data sources
+### prometheus
 Il faut annoncer à Grafana la source de données prometheus :
 > Connections > Data sources > Add new data source > Prometheus
 
 - **Connection :** http://prometheus:9090
+
+Puis sauvegardez et testé tout en bas
+### Mimir
+> Connections > Data sources > Add new data source > Prometheus
+
+| Paramètre | Valeur |
+| :--- | :--- |
+| Nom | Mimir |
+| connection | http://mimir:8080/prometheus |
+
+on ajoute aussi un nouvau http header
+
+| Paramètre | Valeur |
+| :--- | :--- |
+| Header | X-Scope-OrgID |
+| Value | anonymous |
 
 Puis sauvegardez et testé tout en bas
 
