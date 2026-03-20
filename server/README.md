@@ -91,17 +91,25 @@ nano compose.yml
 
 ``` yaml
 services:
+  mimir:
+    image: grafana/mimir:2.10.1
+    container_name: mimir
+    user: "root"
+    restart: unless-stopped
+    command: ["-config.file=/etc/mimir.yml"]
+    volumes:
+      - ./configs/mimir.yml:/etc/mimir.yml:ro
+      - mimir_data:/tmp/mimir
+
   nginx:
     image: nginx:latest
     container_name: nginx-proxy
-    restart: unless-stopped
     ports:
       - "80:80"
     volumes:
       - ./configs/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
-      - grafana
-      - prometheus
+      - mimir
 
   prometheus:
     image: prom/prometheus:latest
@@ -112,6 +120,8 @@ services:
       - --web.enable-remote-write-receiver
       - --web.external-url=http://localhost/prometheus/
       - --web.route-prefix=/
+    volumes:
+      - ./configs/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
 
@@ -127,6 +137,9 @@ services:
       - GF_SERVER_SERVE_FROM_SUB_PATH=true
     depends_on:
       - prometheus
+
+volumes:
+  mimir_data:
 ```
 
 Lancement de la stack :
