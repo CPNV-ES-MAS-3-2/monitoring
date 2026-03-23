@@ -117,7 +117,7 @@ compactor:
 ## Configuration du prometheus
 Créez le fichier de configuration pour gérer le routage des services via des sous-chemins.
 ``` Bash
-nano configs/mimir.yml
+nano configs/prometheus.yml
 ```
 Insérez la configuration suivante :
 ```
