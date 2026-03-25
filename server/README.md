@@ -154,6 +154,7 @@ services:
   nginx:
     image: nginx:latest
     container_name: nginx-proxy
+    restart: unless-stopped
     ports:
       - "80:80"
     volumes:
