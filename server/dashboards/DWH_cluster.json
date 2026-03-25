@@ -106,7 +106,7 @@
         {
           "editorMode": "code",
           "expr": "mysql_global_status_wsrep_flow_control_paused",
-          "legendFormat": "__auto",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -299,7 +299,7 @@
         {
           "editorMode": "code",
           "expr": "mysql_global_status_wsrep_local_recv_queue",
-          "legendFormat": "__auto",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -397,7 +397,7 @@
           },
           "editorMode": "code",
           "expr": "mysql_global_status_wsrep_received_bytes",
-          "legendFormat": "__auto",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -426,13 +426,13 @@
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "cluster_galera",
   "uid": "adrvglh",
-  "version": 13,
+  "version": 15,
   "weekStart": ""
 }
