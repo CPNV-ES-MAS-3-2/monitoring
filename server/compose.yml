@@ -44,11 +44,8 @@ services:
       - GF_SERVER_DOMAIN=stage.etl.cld.education
       - GF_SERVER_ROOT_URL=https://stage.etl.cld.education/grafana/
       - GF_SERVER_SERVE_FROM_SUB_PATH=true
-      # Autorise le domaine pour le mécanisme CSRF
       - GF_SECURITY_CSRF_ADDITIONAL_ORIGINS=https://stage.etl.cld.education
-      # Autorise toutes les sources pour le mécanisme d'origine (Joker *)
       - GF_SECURITY_CSRF_TRUSTED_ORIGINS=*
-      # Requis pour le bon fonctionnement des cookies en HTTPS
       - GF_SESSION_COOKIE_SECURE=true
       - GF_SESSION_COOKIE_SAMESITE=none
     depends_on:
