@@ -79,7 +79,32 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "ip-10-0-3-12"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
@@ -272,7 +297,32 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "ip-10-0-3-4"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
@@ -304,7 +354,7 @@
           "refId": "A"
         }
       ],
-      "title": "work_flow",
+      "title": "Receive Queue",
       "type": "timeseries"
     },
     {
@@ -413,8 +463,8 @@
     "list": [
       {
         "current": {
-          "text": "prometheus",
-          "value": "dfgv4iai4i3uod"
+          "text": "Mimir",
+          "value": "ffh2m7r5nl6o0e"
         },
         "name": "Datasource",
         "options": [],
@@ -426,13 +476,13 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "cluster_galera",
   "uid": "adrvglh",
-  "version": 15,
+  "version": 17,
   "weekStart": ""
 }
