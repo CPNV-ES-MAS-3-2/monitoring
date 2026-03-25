@@ -28,43 +28,25 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "dark-red",
+                  "index": 1,
+                  "text": "Offline"
+                },
+                "1": {
+                  "color": "dark-green",
+                  "index": 0,
+                  "text": "Online"
+                }
+              },
+              "type": "value"
             }
-          },
-          "mappings": [],
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -87,32 +69,39 @@
         "x": 0,
         "y": 0
       },
-      "id": 4,
+      "id": 2,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
         },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
       "pluginVersion": "12.4.1",
       "targets": [
         {
           "editorMode": "code",
-          "expr": "mysql_global_status_wsrep_flow_control_paused",
+          "exemplar": false,
+          "expr": "node_systemd_unit_state{name=\"proxysql.service\", state=\"active\"}",
+          "format": "time_series",
+          "instant": false,
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "flow_paused",
-      "type": "timeseries"
+      "title": "proxysql",
+      "type": "stat"
     },
     {
       "datasource": {
@@ -129,13 +118,13 @@
               "options": {
                 "0": {
                   "color": "dark-red",
-                  "index": 1,
-                  "text": "unhealthy"
+                  "index": 0,
+                  "text": "Offline"
                 },
                 "1": {
                   "color": "dark-green",
-                  "index": 0,
-                  "text": "healthy"
+                  "index": 1,
+                  "text": "Online"
                 }
               },
               "type": "value"
@@ -184,33 +173,16 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cfgkkmsel1ibka"
+            "uid": "dfgv4iai4i3uod"
           },
           "editorMode": "code",
-          "exemplar": false,
-          "expr": "mysql_global_status_wsrep_cluster_size",
-          "format": "table",
-          "instant": false,
-          "legendFormat": "__auto",
+          "expr": "node_systemd_unit_state{name=\"mariadb.service\", state=\"active\"}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "cfgkkmsel1ibka"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "min(mysql_global_status_wsrep_cluster_status)",
-          "format": "time_series",
-          "instant": false,
-          "legendFormat": "-",
-          "range": true,
-          "refId": "B"
         }
       ],
-      "title": "etat_cluster",
+      "title": "Mariadb",
       "type": "gauge"
     },
     {
@@ -298,13 +270,13 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "mysql_global_status_wsrep_local_recv_queue",
-          "legendFormat": "__auto",
+          "expr": "node_systemd_unit_state{name=\"proxysql.service\", state=\"active\"}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "work_flow",
+      "title": "Proxysql_log",
       "type": "timeseries"
     },
     {
@@ -374,7 +346,7 @@
         "x": 12,
         "y": 8
       },
-      "id": 2,
+      "id": 4,
       "options": {
         "legend": {
           "calcs": [],
@@ -391,18 +363,14 @@
       "pluginVersion": "12.4.1",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "cfgkkmsel1ibka"
-          },
           "editorMode": "code",
-          "expr": "mysql_global_status_wsrep_received_bytes",
-          "legendFormat": "__auto",
+          "expr": "node_systemd_unit_state{name=\"mariadb.service\", state=\"active\"}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "received_bytes",
+      "title": "mariadb_log",
       "type": "timeseries"
     }
   ],
@@ -410,16 +378,29 @@
   "schemaVersion": 42,
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "text": "prometheus",
+          "value": "dfgv4iai4i3uod"
+        },
+        "name": "Datasource",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "type": "datasource"
+      }
+    ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "cluster_galera",
-  "uid": "adrvglh",
-  "version": 12,
+  "title": "etat_services",
+  "uid": "ad9h7zf",
+  "version": 11,
   "weekStart": ""
 }
