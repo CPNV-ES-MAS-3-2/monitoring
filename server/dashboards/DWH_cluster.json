@@ -124,7 +124,23 @@
           "color": {
             "mode": "thresholds"
           },
-          "mappings": [],
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "dark-red",
+                  "index": 1,
+                  "text": "unhealthy"
+                },
+                "1": {
+                  "color": "dark-green",
+                  "index": 0,
+                  "text": "healthy"
+                }
+              },
+              "type": "value"
+            }
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -175,7 +191,7 @@
           "expr": "mysql_global_status_wsrep_cluster_size",
           "format": "table",
           "instant": false,
-          "legendFormat": "nombre de noeud",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         },
@@ -394,16 +410,29 @@
   "schemaVersion": 42,
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "text": "prometheus",
+          "value": "dfgv4iai4i3uod"
+        },
+        "name": "Datasource",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "type": "datasource"
+      }
+    ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "cluster_galera",
   "uid": "adrvglh",
-  "version": 7,
+  "version": 13,
   "weekStart": ""
 }
