@@ -183,9 +183,13 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - GF_SERVER_DOMAIN=localhost
-      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:%(http_port)s/grafana/
+      - GF_SERVER_DOMAIN=stage.etl.cld.education
+      - GF_SERVER_ROOT_URL=https://stage.etl.cld.education/grafana/
       - GF_SERVER_SERVE_FROM_SUB_PATH=true
+      - GF_SECURITY_CSRF_ADDITIONAL_ORIGINS=https://stage.etl.cld.education
+      - GF_SECURITY_CSRF_TRUSTED_ORIGINS=*
+      - GF_SESSION_COOKIE_SECURE=true
+      - GF_SESSION_COOKIE_SAMESITE=none
     depends_on:
       - prometheus
 
