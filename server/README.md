@@ -91,14 +91,74 @@ server {
     }
 }
 ```
+## Configuration du service Mimir
+Créez le fichier de configuration pour gérer le routage des services via des sous-chemins.
+``` Bash
+nano configs/mimir.yml
+```
+Insérez la configuration suivante :
+```
+target: all
+multitenancy_enabled: false
 
-### Déploiement des Services (Docker Compose)
+ingester:
+  ring:
+    replication_factor: 1
+    kvstore:
+      store: inmemory
+
+distributor:
+  ring:
+    kvstore:
+      store: inmemory
+
+store_gateway:
+  sharding_ring:
+    kvstore:
+      store: inmemory
+
+compactor:
+  sharding_ring:
+    kvstore:
+      store: inmemory
+```
+## Configuration du prometheus
+Créez le fichier de configuration pour gérer le routage des services via des sous-chemins.
+``` Bash
+nano configs/prometheus.yml
+```
+Insérez la configuration suivante :
+```
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+remote_write:
+  - url: http://mimir:8080/api/v1/push
+    headers:
+      X-Scope-OrgID: anonymous
+```
+## Déploiement des Services (Docker Compose)
 ``` Bash
 nano compose.yml
 ```
 
 ``` yaml
 services:
+  mimir:
+    image: grafana/mimir:2.10.1
+    container_name: mimir
+    user: "root"
+    restart: unless-stopped
+    command: ["-config.file=/etc/mimir.yml"]
+    volumes:
+      - ./configs/mimir.yml:/etc/mimir.yml:ro
+      - mimir_data:/tmp/mimir
+
   nginx:
     image: nginx:latest
     container_name: nginx-proxy
@@ -108,8 +168,7 @@ services:
     volumes:
       - ./configs/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
-      - grafana
-      - prometheus
+      - mimir
 
   prometheus:
     image: prom/prometheus:latest
@@ -120,6 +179,8 @@ services:
       - --web.enable-remote-write-receiver
       - --web.external-url=http://localhost/prometheus/
       - --web.route-prefix=/
+    volumes:
+      - ./configs/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
 
@@ -130,11 +191,18 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - GF_SERVER_DOMAIN=localhost
-      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:%(http_port)s/grafana/
+      - GF_SERVER_DOMAIN=stage.etl.cld.education
+      - GF_SERVER_ROOT_URL=https://stage.etl.cld.education/grafana/
       - GF_SERVER_SERVE_FROM_SUB_PATH=true
+      - GF_SECURITY_CSRF_ADDITIONAL_ORIGINS=https://stage.etl.cld.education
+      - GF_SECURITY_CSRF_TRUSTED_ORIGINS=*
+      - GF_SESSION_COOKIE_SECURE=true
+      - GF_SESSION_COOKIE_SAMESITE=none
     depends_on:
       - prometheus
+
+volumes:
+  mimir_data:
 ```
 
 Lancement de la stack :
@@ -143,11 +211,28 @@ docker compose up -d
 ```
 Une fois les services démarrés, accédez à Grafana via http://<IP_SERVEUR>/grafana/.
 
-### Configuration de la data source
+## Configuration des data sources
+### prometheus
 Il faut annoncer à Grafana la source de données prometheus :
 > Connections > Data sources > Add new data source > Prometheus
 
 - **Connection :** http://prometheus:9090
+
+Puis sauvegardez et testé tout en bas
+### Mimir
+> Connections > Data sources > Add new data source > Prometheus
+
+| Paramètre | Valeur |
+| :--- | :--- |
+| Nom | Mimir |
+| connection | http://mimir:8080/prometheus |
+
+on ajoute aussi un nouvau http header
+
+| Paramètre | Valeur |
+| :--- | :--- |
+| Header | X-Scope-OrgID |
+| Value | anonymous |
 
 Puis sauvegardez et testé tout en bas
 
