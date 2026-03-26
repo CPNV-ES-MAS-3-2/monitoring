@@ -2,8 +2,16 @@
 
 Ce guide détaille le déploiement du serveur de monitoring utilisant **Prometheus** pour la réception des données et **Grafana** pour la visualisation, avec un reverse-proxy **Nginx**.
 
-## Configuration de l'environnement
-### Monter le repertoire
+## Prérequis
+- Ubuntu 24.04 LTS
+- Docker & Docker compose installé
+
+## Déploiement automatisé
+TODO
+
+## Déploiement manuel
+### Configuration de l'environnement
+#### Monter le repertoire
 ``` Bash
 sudo mkdir /mnt/monitoring
 sudo mkfs.ext4 /dev/nvme1n1
@@ -11,7 +19,7 @@ sudo mount /dev/nvme1n1 /mnt/monitoring
 cd /mnt/monitoring
 ```
 
-### Configurer la persistence du repertoire
+#### Configurer la persistence du repertoire
 ``` Bash
 ## Recuperer uuid
 sudo blkid /dev/nvme1n1
@@ -20,7 +28,7 @@ sudo nano /etc/fstab
 ## Ajouter dans le fstab :
 UUID=<mnt_uuid> /mnt/monitoring ext4 defaults 0 2
 ```
-### Installation de Docker
+#### Installation de Docker
 ``` Bash
 ## Télécharger le script
 wget https://raw.githubusercontent.com/CPNV-ES-MAS-3-2/monitoring/develop/server/setup_docker.sh
@@ -32,7 +40,7 @@ sudo chmod +x setup_docker.sh
 sudo bash setup_docker.sh
 ```
 
-## Configuration du Reverse-Proxy Nginx
+### Configuration du Reverse-Proxy Nginx
 Créez le fichier de configuration pour gérer le routage des services via des sous-chemins.
 ``` Bash
 mkdir -p configs
@@ -84,7 +92,7 @@ server {
 }
 ```
 
-## Déploiement des Services (Docker Compose)
+### Déploiement des Services (Docker Compose)
 ``` Bash
 nano compose.yml
 ```
@@ -135,7 +143,7 @@ docker compose up -d
 ```
 Une fois les services démarrés, accédez à Grafana via http://<IP_SERVEUR>/grafana/.
 
-## Configuration de la data source
+### Configuration de la data source
 Il faut annoncer à Grafana la source de données prometheus :
 > Connections > Data sources > Add new data source > Prometheus
 
@@ -143,8 +151,8 @@ Il faut annoncer à Grafana la source de données prometheus :
 
 Puis sauvegardez et testé tout en bas
 
-## Configuration des Tableaux de Bord (Grafana)
-### Importation des Dashboards
+### Configuration des Tableaux de Bord (Grafana)
+#### Importation des Dashboards
 
 > Dashboards > New > New dashboard
 Utilisez les IDs officiels pour importer les visualisations :
@@ -159,7 +167,7 @@ Utilisez les IDs officiels pour importer les visualisations :
   - **ID :** 14057
   - **Usage** État de santé des base de donnée MariaDB
 
-#### Correction de la variable Prometheus pour la dashboard CAdvisor Exporter
+##### Correction de la variable Prometheus pour la dashboard CAdvisor Exporter
 Pour le dashboard 14282, une modification manuelle est nécessaire pour lier les données :
 > Dashboard Settings (Top right) > Variables > New Variable
 
@@ -170,7 +178,7 @@ Configurez la variable comme suit :
 | Name | DS_PROMETHEUS |
 | Data Source options Type | Prometheus |
 
-#### Monitoring MariaDB
+##### Monitoring MariaDB
 grafana>dashboard>new dashboard
 source prometheus
 query: 

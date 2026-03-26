@@ -14,10 +14,22 @@
 | Port | Protocole | Usage |
 |------|-----------|-------|
 | 22 | TCP | SSH |
-| 3000 | TCP | Interface Grafana |
-| 9090 | TCP | Interface/API Prometheus |
+| 80 | TCP | HTTP Reverse-Proxy |
 
 ## Architecture
-!["Architecture"](/docs/img/arch_scheme.png)
+!["Architecture"](/.github/img/arch_scheme.png)
 
-
+## Structure des fichiers
+```
+.
+├── .github/
+│   ├── diagrams/          # diagrams code
+│   ├── img/               # images for README              
+├── nodes/                 # Client-side agent configs
+│   ├── k8s/               # K8s configs + Detailed README
+│   ├── docker/            # Docker configs + Detailed README
+│   └── linux/             # Linux configs + Detailed README
+├── server/                # Monitoring server configs + Detailed README       
+├── ANALYSIS.md            # Analysis for monitoring stack choice
+└── README.md              # Root README.md
+```

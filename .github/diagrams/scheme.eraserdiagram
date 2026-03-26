@@ -1,0 +1,67 @@
+Administrators [icon: user]
+AWS Infra [label: "AWS Infrastructure"] {
+    AWS Hypervisor [label: "AWS Hypervisor"] {
+
+      AWS DMZ Network [label: "AWS DMZ Network"] {
+        Firewall[label: "Firewall", icon: shield]
+      }
+  
+      AWS LAN Network [label: "AWS LAN Network"] {
+        
+        K8s Block [label: "K8s Network"] {
+          K8s-Master [label: "K8s Master"] {
+            K8s-Master-API [label: "K8s API", icon: k8s-api]
+            K8s-Master-kubelet [label: "K8s kubelet", icon: k8s-kubelet]
+            K8s-Master-alloy [label: "Alloy (daemonset)", icon: k8s-daemonset]  
+          }
+
+          K8s-Worker-01 [label: "K8s-Worker-01"] {
+            K8s-Worker-01-kubelet [label: "K8s kubelet", icon: k8s-kubelet]
+            K8s-Worker-01-ksm [label: "kube-state-metrics", icon: k8s-pod]
+            K8s-Worker-01-alloy [label: "Alloy (daemonset)", icon: k8s-daemonset]
+          }
+        }
+  
+        Monitoring [label: "Monitoring Network"] {
+          Mon VM 1 [label: "Mon VM 1"] {
+            Grafana [icon: layout]
+            Prometheus [icon: server]
+            RP [icon: shield]
+          }
+        }
+  
+        DWH [label: "Datawarehouse Network"] {
+          DWH-VM-1 [label: "DWH VM 1"] {
+            DWH-VM-1-Alloy-s [label: "Alloy systemd", icon: service]
+          }
+        }
+      }
+    }
+  }
+  
+// AWS Connections
+
+  /// Monitoring connections
+  Firewall > RP: "/grafana [80/HTTP]"
+  Firewall > RP: "/prometheus [80/HTTP]"
+  
+  RP > Grafana: "[3000/HTTP]"
+  RP > Prometheus: "[9090/HTTP]"
+
+  Grafana > Prometheus: "[9090/HTTP]"
+
+  /// K8s connections
+  K8s-Master-kubelet < K8s-Master-alloy : "Scrapes node, pod & container metrics"
+  K8s-Master-API < K8s-Master-alloy : "Scrapes API data"
+
+  K8s-Worker-01-kubelet < K8s-Worker-01-alloy : "Scrapes node, pod & container metrics"
+  K8s-Worker-01-ksm < K8s-Worker-01-alloy : "Scrapes Object State & Metadata"
+
+  K8s-Master-alloy >  RP : "/prometheus/api/v1/write [80/HTTP]"
+
+  K8s-Worker-01-alloy > RP: "/prometheus/api/v1/write [80/HTTP]"
+  /// DWH connections
+  RP < DWH-VM-1-Alloy-s: "/prometheus/api/v1/write [80/HTTP]"
+
+// External connections
+  Administrators > Firewall: "/grafana [80/HTTP]"
