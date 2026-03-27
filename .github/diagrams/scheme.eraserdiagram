@@ -26,6 +26,7 @@ AWS Infra [label: "AWS Infrastructure"] {
           Mon VM 1 [label: "Mon VM 1"] {
             Grafana [icon: layout]
             Prometheus [icon: server]
+            Mimir [icon: database]
             RP [icon: shield]
           }
         }
@@ -49,6 +50,9 @@ AWS Infra [label: "AWS Infrastructure"] {
   RP > Prometheus: "[9090/HTTP]"
 
   Grafana > Prometheus: "[9090/HTTP]"
+
+  Mimir < Prometheus: "[8080/HTTP]"
+  Mimir < Grafana: "[8080/HTTP]"
 
   /// K8s connections
   K8s-Master-kubelet < K8s-Master-alloy : "Scrapes node, pod & container metrics"
