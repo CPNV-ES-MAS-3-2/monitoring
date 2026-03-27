@@ -1,0 +1,83 @@
+---
+- name: Deploy Grafana Alloy
+  hosts: localhost
+  connection: local
+  become: true
+ 
+  tasks:
+ 
+    - name: Créer le répertoire keyrings
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: "0755"
+ 
+    - name: Télécharger la clé GPG Grafana
+      get_url:
+        url: https://apt.grafana.com/gpg-full.key
+        dest: /etc/apt/keyrings/grafana.asc
+        mode: "0644"
+ 
+    - name: Ajouter le dépôt Grafana
+      apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/grafana.asc] https://apt.grafana.com stable main"
+        filename: grafana
+        state: present
+ 
+    - name: Installer Alloy
+      apt:
+        name: alloy
+        state: present
+        update_cache: true
+ 
+    - name: Override systemd - exécution en root
+      copy:
+        dest: /etc/systemd/system/alloy.service.d/override.conf
+        content: |
+          [Service]
+          User=root
+          Group=root
+        mode: "0644"
+ 
+    - name: Déployer la configuration Alloy
+      copy:
+        dest: /etc/alloy/config.alloy
+        mode: "0644"
+        content: |
+          prometheus.exporter.unix "local_host" {
+            enable_collectors = ["systemd"]
+          }
+ 
+          prometheus.scrape "metamonitoring" {
+            targets         = prometheus.exporter.unix.local_host.targets
+            forward_to      = [prometheus.relabel.common_labels.receiver]
+            scrape_interval = "15s"
+            scrape_timeout  = "10s"
+          }
+ 
+          prometheus.relabel "common_labels" {
+            forward_to = [prometheus.remote_write.local_prometheus.receiver]
+ 
+            rule {
+              target_label = "job"
+              replacement  = "node_exporter"
+            }
+ 
+            rule {
+              target_label = "instance"
+              replacement  = sys.env("HOSTNAME")
+            }
+          }
+ 
+          prometheus.remote_write "local_prometheus" {
+            endpoint {
+              url = "http://10.0.4.8/prometheus/api/v1/write"
+            }
+          }
+ 
+    - name: Activer et démarrer Alloy
+      systemd:
+        name: alloy
+        enabled: true
+        state: restarted
+        daemon_reload: true
