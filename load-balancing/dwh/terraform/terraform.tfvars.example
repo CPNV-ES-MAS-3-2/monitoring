@@ -1,0 +1,27 @@
+# Regional settings
+region = "eu-west-1"
+
+# Project naming
+project_name = "datawarehouse"
+
+# Instance settings
+ami_id        = "ami-XXXXXXXXXXX"
+instance_type = "t3.small"
+key_name      = "private_datawarehouse_cluster"
+
+# Network IDs
+subnets         = ["subnet-XXXXXXXXXXX"]
+security_groups = ["sg-XXXXXXXXXXX", "sg-XXXXXXXXXXX"] 
+
+# Scaling limits
+min_size = 2
+max_size = 7
+
+# DWH Info 
+existing_dwh_node_01_instance_id = "i-XXXXXXXXXXX"
+existing_dwh_node_02_instance_id = "i-XXXXXXXXXXX"
+
+# Time settings (in seconds)
+instance_cooldown           = 60
+alarm_period                = 30
+health_check_grace_period   = 30
