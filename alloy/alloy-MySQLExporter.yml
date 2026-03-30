@@ -62,24 +62,6 @@
               Group={{ alloy_group }}
           notify: Restart Alloy
 
-    - name: Lancer le conteneur cAdvisor
-      community.docker.docker_container:
-        name: cadvisor
-        image: "gcr.io/cadvisor/cadvisor:{{ cadvisor_version }}"
-        state: started
-        restart_policy: unless-stopped
-        privileged: true
-        published_ports:
-          - "8080:8080"
-        volumes:
-          - "/:/rootfs:ro"
-          - "/var/run:/var/run:ro"
-          - "/sys:/sys:ro"
-          - "/var/lib/docker/:/var/lib/docker:ro"
-          - "/dev/disk/:/dev/disk:ro"
-        devices:
-          - "/dev/kmsg:/dev/kmsg"
-
     - name: Déployer la configuration Alloy
       copy:
         dest: /etc/alloy/config.alloy
