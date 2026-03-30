@@ -91,6 +91,83 @@ server {
     }
 }
 ```
+
+## Configuration du alerting
+Créez le fichier de configuration pour gérer le routage des services via des sous-chemins.
+``` Bash
+nano configs/hook.json
+```
+Insérez la configuration suivante :
+```
+[
+  {
+    "id": "remediate-ssh",
+    "execute-command": "/etc/webhook/restart_service.sh",
+    "command-working-directory": "/etc/webhook",
+    "pass-arguments-to-command": [
+      { "source": "payload", "name": "commonLabels.service_name" },
+      { "source": "payload", "name": "commonLabels.instance" }
+    ]
+  }
+]
+```
+réez le fichier de configuration pour gérer le routage des services via des sous-chemins.
+``` Bash
+nano configs/alert_rules.yml
+```
+Insérez la configuration suivante :
+```
+groups:
+- name: auto_remediation
+  rules:
+  - alert: ServiceDown
+    # Surveille mariadb OU nginx. Retire le port dynamique.
+    expr: node_systemd_unit_state{name=~"mariadb.service|proxysql.service", state="active"} == 0
+    for: 1m
+    labels:
+      # Extrait le nom brut (ex: "mariadb") depuis "mariadb.service"
+      service_name: "{{ $labels.name | reReplaceAll \"\\\\.service\" \"\" }}"
+    annotations:
+      summary: "Relance auto de {{ $labels.name }} sur l'hôte {{ $labels.instance }}"
+```
+réez le fichier de configuration pour gérer le routage des services via des sous-chemins.
+``` Bash
+nano configs/alertmanager.yml
+```
+Insérez la configuration suivante :
+```
+route:
+  receiver: 'webhook-remediator'
+  group_wait: 10s
+  group_interval: 1m
+  repeat_interval: 10m
+
+receivers:
+- name: 'webhook-remediator'
+  webhook_configs:
+  - url: 'http://webhook:9000/hooks/remediate-ssh'
+    send_resolved: false
+```
+réez le fichier de configuration pour gérer le routage des services via des sous-chemins.
+``` Bash
+nano configs/restart_service.sh
+```
+Insérez la configuration suivante :
+```
+#!/bin/sh
+SERVICE=$1
+RAW_INSTANCE=$2
+USER="admin"
+
+# Transformation magique : ip-10-0-3-8 -> 10.0.3.8
+# On remplace les tirets par des points et on enlève le préfixe "ip-"
+IP=$(echo "$RAW_INSTANCE" | cut -d':' -f1 | sed 's/ip-//' | tr '-' '.')
+
+echo "[$(date)] Tentative sur $IP pour $SERVICE" >> /tmp/webhook.log
+
+ssh -i /etc/webhook/id_rsa_webhook -o StrictHostKeyChecking=no "$USER@$IP" >
+
+```
 ## Configuration du service Mimir
 Créez le fichier de configuration pour gérer le routage des services via des sous-chemins.
 ``` Bash
@@ -180,7 +257,8 @@ services:
       - --web.external-url=http://localhost/prometheus/
       - --web.route-prefix=/
     volumes:
-      - ./configs/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./configs/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./configs/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
     ports:
       - "9090:9090"
 
@@ -200,6 +278,31 @@ services:
       - GF_SESSION_COOKIE_SAMESITE=none
     depends_on:
       - prometheus
+
+  # --- GESTION DES ALERTES ---
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    restart: unless-stopped
+    volumes:
+      - ./configs/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+
+  # --- AUTOMATISATION (REMEDIATION) ---
+  webhook:
+    image: almir/webhook
+    container_name: webhook
+    restart: unless-stopped
+    user: root
+    volumes:
+      - ./configs/hooks.json:/etc/webhook/hooks.json:ro
+      - ./configs/restart_service.sh:/etc/webhook/restart_service.sh:ro
+      - ./configs/id_rsa_webhook:/etc/webhook/id_rsa_webhook:ro
+    # CORRECTION CRUCIALE : On installe SSH au démarrage
+    entrypoint: >
+      sh -c "apk add --no-cache openssh-client &&
+      /usr/local/bin/webhook -verbose -hooks=/etc/webhook/hooks.json -hotreload"
 
 volumes:
   mimir_data:
