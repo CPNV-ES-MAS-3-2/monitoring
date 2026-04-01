@@ -1,0 +1,28 @@
+# Regional settings
+region = "eu-west-1"
+
+# Project naming
+project_name = "k8s"
+
+# Instance settings
+ami_id        = "ami-XXXXXXXXXXXXXX"
+instance_type = "t3.medium"
+key_name      = "private_k8s_cluster"
+
+# Network IDs
+subnets         = ["subnet-XXXXXXXXXXXXXX"] 
+security_groups = ["sg-XXXXXXXXXXXXXX", "sg-XXXXXXXXXXXXXX"] 
+
+# Scaling limits
+min_size = 1
+max_size = 7
+
+# K8s Info 
+k8s_master_instance_id  = "i-XXXXXXXXXXXXXX"
+network_in_threshold    = 100000
+existing_k8s_node_id    = "i-XXXXXXXXXXXXXX"
+
+# Time settings (in seconds)
+instance_cooldown           = 60
+alarm_period                = 30
+health_check_grace_period   = 30

@@ -1,0 +1,23 @@
+target: all
+multitenancy_enabled: false
+
+ingester:
+  ring:
+    replication_factor: 1
+    kvstore:
+      store: inmemory
+
+distributor:
+  ring:
+    kvstore:
+      store: inmemory
+
+store_gateway:
+  sharding_ring:
+    kvstore:
+      store: inmemory
+
+compactor:
+  sharding_ring:
+    kvstore:
+      store: inmemory
